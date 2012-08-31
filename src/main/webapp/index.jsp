@@ -8,10 +8,7 @@ Anyone can view this page.
 </p>
 
 <p>
-<a href="secure/index.jsp">Secure page</a></p>
-<p><a href="secure/extreme/index.jsp">Extremely secure page</a></p>
-<p><a href="secure/hello.jsp">Hello World!</a></p>
-<p><a href="admin/home.jsp">admin</a></p>
-<p><a href="secure/home.jsp">user</a></p>
+<a href="admin.jsp">admin.jsp</a></p>
+<p><a href="timeout.jsp">logout</a></p>
 </body>
 </html>

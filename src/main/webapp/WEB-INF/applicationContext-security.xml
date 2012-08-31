@@ -7,43 +7,25 @@
                         http://www.springframework.org/schema/security 
                         http://www.springframework.org/schema/security/spring-security-3.0.xsd">
     
-<!--    <global-method-security pre-post-annotations="enabled">-->
-<!--    -->
-<!--    </global-method-security>-->
-<!--    -->
-<!--    <http use-expressions="true">-->
-<!--    	<intercept-url pattern="/secure/extreme/**" access="hasRole('ROLE_SUPERVISOR')"/>-->
-<!--    	<intercept-url pattern="/secure/**" access="isAuthenticated()"/>-->
-<!--    	<intercept-url pattern="/**" access="permitAll"/>-->
-<!--    	<form-login login-page="/login.jsp" authentication-failure-url="/error.jsp" default-target-url="/login.action"/>-->
-<!--    	<logout/>-->
-<!--    	<remember-me/>-->
-<!--    	-->
-<!--    	<session-management invalid-session-url="/timeout.jsp">-->
-<!--    		<concurrency-control max-sessions="1" error-if-maximum-exceeded="false"/>-->
-<!--    	-->
-<!--    	</session-management>-->
-<!--    	-->
-<!--    </http>-->
-<!--    -->
-<!--     rod/koala dianne/emu scott/wombat peter/opal -->
-<!--    <authentication-manager>-->
-<!--    	<authentication-provider>-->
-<!--			<user-service>-->
-<!--				<user name="rod" password="wss" authorities="ROLE_SUPERVISOR, ROLE_USER, ROLE_TELLER" />-->
-<!--				<user name="魏升水" password="wss" authorities="ROLE_SUPERVISOR, ROLE_USER, ROLE_TELLER" />-->
-<!--                <user name="dianne" password="wss" authorities="ROLE_USER,ROLE_TELLER" />-->
-<!--                <user name="scott" password="wss" authorities="ROLE_USER" />-->
-<!--                <user name="peter" password="wss" authorities="ROLE_USER" />-->
-<!--			</user-service>    -->
-<!--    	</authentication-provider>-->
-<!--    </authentication-manager>-->
-	
-		<beans:bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource">
-			<beans:property name="driverClassName"><beans:value>com.mysql.jdbc.Driver</beans:value></beans:property>
-			<beans:property name="url"><beans:value>jdbc:mysql://localhost:3306/test</beans:value></beans:property>
-			<beans:property name="username"><beans:value>root</beans:value></beans:property>
-			<beans:property name="password"><beans:value>167118</beans:value></beans:property>   
+		<http auto-config="true">
+			<intercept-url pattern="/login.jsp" access="IS_AUTHENTICATED_ANONYMOUSLY"/>
+			<intercept-url pattern="/admin.jsp" access="ROLE_ADMIN"/>
+			<intercept-url pattern="/**" access="ROLE_USER"/>
+		</http>
+		
+		<authentication-manager>
+			<authentication-provider>
+				<jdbc-user-service data-source-ref="dataSource" users-by-username-query="select username, password, status as enabled from user where username=?"
+				  authorities-by-username-query="select u.username, r.name as authoritiy from user u, role r ,user_role ur where u.username=? and u.id=ur.user_id  and r.id=ur.role_id " />
+			</authentication-provider>
+		</authentication-manager>
+		
+		<beans:bean id="dataSource" 
+					class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+			<beans:property name="driverClassName" value="com.mysql.jdbc.Driver" />
+			<beans:property name="url" value="jdbc:mysql://localhost:3306/test2"/>	
+			<beans:property name="username" value="root" />
+			<beans:property name="password" value="167118"/>		
 		</beans:bean>
 		
 		<beans:bean id="sessionFactory" class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">
@@ -68,22 +50,5 @@
 				</beans:list>
 			</beans:property>
 		</beans:bean>
-
 		
-		<http use-expressions="true">
-			<intercept-url pattern="/admin/**" access="hasRole('ADMIN')"/>
-			<intercept-url pattern="/secure/**" access="hasRole('ROLE_USER')"/>
-			<intercept-url pattern="/**" filters="none"/>
-			<form-login login-page="/login.jsp"  default-target-url="/login.action"/>
-    	<logout/>
-    	<remember-me/>
-		</http>
-		
-		<authentication-manager>
-			<authentication-provider>
-				<jdbc-user-service data-source-ref="dataSource" users-by-username-query="select username,password, enabled as status from user
-				 where username=?" authorities-by-username-query="select u.username, r.name as authority from user u join authority 
-				  a on a.userid=u.id join role r on r.id = a.roleid where u.username=?"/>
-			</authentication-provider>
-		</authentication-manager>         
 </beans:beans>
